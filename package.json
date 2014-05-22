@@ -12,5 +12,10 @@
   },
   "scripts": {
     "start": "coffee index.coffee"
+  },
+  "engines": {
+    "node": "~0.10.28",
+    "npm": "~1.4.3",
+    "phantomjs": "~1.9.0"
   }
 }
