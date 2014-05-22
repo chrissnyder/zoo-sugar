@@ -3,6 +3,42 @@ async = require 'async'
 colors = require 'colors'
 AWS = require 'aws-sdk'
 express = require 'express'
+phantom = require 'phantom'
+
+projects = [
+  {
+    name: 'galaxy_zoo'
+    display_name: 'Galaxy Zoo' 
+  }, {
+    name: 'milkyway'
+    display_name: 'Milky Way Project'
+    url: 'http://www.milkywayproject.org'
+  }, {
+    name: 'planet_four'
+    display_name: 'Planet Four'
+    url: 'http://www.planetfour.org'
+  }, {
+    name: 'plankton'
+    display_name: 'Plankton Portal'
+    url: 'http://www.planktonportal.org'
+  }, {
+    name: 'radio'
+    display_name: 'Radio Galaxy Zoo'
+    url: 'http://radio.galaxyzoo.org'
+  }, {
+    name: 'sunspot'
+    display_name: 'Sunspotter'
+    url: 'http://www.sunspotter.org'
+  }, {
+    name: 'wise'
+    display_name: 'Disk Detective'
+    url: 'http://www.diskdetective.org'
+  }, {
+    name: 'worms'
+    display_name: 'Worm Watch Lab'
+    url: 'http://www.wormwatchlab.org'
+  }
+]
 
 projectList = [
   'galaxy_zoo'
@@ -57,6 +93,17 @@ parseProject = (project, cb) ->
     walkTranslations body.translation
     cb()
 
+fetchDeployedTranslations = (project, cb) ->
+  phantom.create (ph) ->
+    ph.createPage (page) ->
+      page.open project.url, (status) ->
+        page.evaluate (-> Object.keys zooniverse.LanguageManager?.current?.translations), (result) ->
+          payload = {}
+          payload[project.name] = result
+
+          cb null, payload
+          ph.exit()
+
 
 app = express()
 
@@ -78,6 +125,16 @@ app.get '/update_progress', (req, res) ->
       Body: new Buffer JSON.stringify workspace
       Bucket: 'zooniverse-demo'
       Key: "translation-progress.json"
+      ACL: 'public-read'
+      (err, data) ->
+        res.send updated: true
+
+app.get '/deployed_translations', (req, res) ->
+  async.mapLimit projects, 1, fetchDeployedTranslations, (err, translations) ->
+    s3.putObject
+      Body: new Buffer JSON.stringify translations
+      Bucket: 'zooniverse-demo'
+      Key: "deployed-translations.json"
       ACL: 'public-read'
       (err, data) ->
         res.send updated: true

@@ -7,7 +7,8 @@
     "async": "^0.2.10",
     "colors": "^0.6.2",
     "aws-sdk": "^2.0.0-rc12",
-    "express": "^3.5.0"
+    "express": "^3.5.0",
+    "phantom": "^0.6.3"
   },
   "scripts": {
     "start": "coffee index.coffee"
