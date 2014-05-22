@@ -164,7 +164,7 @@
   });
 
   app.get('/deployed_translations', function(req, res) {
-    return async.mapLimit(projects, 1, fetchDeployedTranslations, function(err, translations) {
+    return async.mapLimit(projects, 5, fetchDeployedTranslations, function(err, translations) {
       return s3.putObject({
         Body: new Buffer(JSON.stringify(translations)),
         Bucket: 'zooniverse-demo',

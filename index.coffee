@@ -130,7 +130,7 @@ app.get '/update_progress', (req, res) ->
         res.send updated: true
 
 app.get '/deployed_translations', (req, res) ->
-  async.mapLimit projects, 1, fetchDeployedTranslations, (err, translations) ->
+  async.mapLimit projects, 5, fetchDeployedTranslations, (err, translations) ->
     s3.putObject
       Body: new Buffer JSON.stringify translations
       Bucket: 'zooniverse-demo'
