@@ -107,9 +107,6 @@ fetchDeployedTranslations = (project, cb) ->
 
 app = express()
 
-app.get '/', (req, res) ->
-  res.send 'goto /update_progress'
-
 app.get '/update_progress', (req, res) ->
   async.eachSeries projectList, parseProject, (error) ->
     for lang in Object.keys workspace
