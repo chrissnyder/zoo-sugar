@@ -139,6 +139,42 @@ app.get '/deployed_translations', (req, res) ->
       (err, data) ->
         res.send updated: true
 
+endpoints = (for i in [1..4]
+  "https://api.zooniverse.org/projects/cyclone_center/groups/categories/2005?page=#{ i }"
+)
+
+fetchStorms = (item, callback) ->
+  request.get item, (err, res, body) ->
+    body = JSON.parse body
+
+    reducedData = body.reduce (p, c, i, arr) ->
+      {
+        needed_classifications: p.needed_classifications + c.metadata.needed_classifications
+        provided_classifications: p.provided_classifications + c.metadata.provided_classifications
+      }
+    , {
+      needed_classifications: 0
+      provided_classifications: 0
+    }
+
+    callback null, reducedData
+
+app.get '/storms_status', (req, res) ->
+  async.map endpoints, fetchStorms, (err, groups) ->
+    reducedData = groups.reduce (p, c, i, arr) ->
+      {
+        needed_classifications: p.needed_classifications + c.needed_classifications
+        provided_classifications: p.provided_classifications + c.provided_classifications
+      }
+
+    s3.putObject
+      Body: new Buffer JSON.stringify reducedData
+      Bucket: 'zooniverse-demo'
+      Key: "2005-storm-status.json"
+      ACL: 'public-read'
+      (err, data) ->
+        res.send updated: true  
+
 port = process.env.PORT || 3004
 app.listen port, ->
   console.log "Listening on #{ port }"
