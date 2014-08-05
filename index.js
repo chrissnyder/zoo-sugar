@@ -190,11 +190,13 @@
       reducedData = body.reduce(function(p, c, i, arr) {
         return {
           needed_classifications: p.needed_classifications + c.metadata.needed_classifications,
-          provided_classifications: p.provided_classifications + c.metadata.provided_classifications
+          provided_classifications: p.provided_classifications + c.metadata.provided_classifications,
+          storms: p.storms.concat([c.id])
         };
       }, {
         needed_classifications: 0,
-        provided_classifications: 0
+        provided_classifications: 0,
+        storms: []
       });
       return callback(null, reducedData);
     });
@@ -206,7 +208,8 @@
       reducedData = groups.reduce(function(p, c, i, arr) {
         return {
           needed_classifications: p.needed_classifications + c.needed_classifications,
-          provided_classifications: p.provided_classifications + c.provided_classifications
+          provided_classifications: p.provided_classifications + c.provided_classifications,
+          storms: p.storms.concat(c.storms)
         };
       });
       return s3.putObject({

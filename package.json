@@ -11,7 +11,7 @@
     "phantom": "^0.6.3"
   },
   "scripts": {
-    "start": "coffee index.coffee"
+    "start": "coffee -wc index.coffee"
   },
   "engines": {
     "node": "~0.10.21",
