@@ -148,10 +148,12 @@ fetchStorms = (item, callback) ->
       {
         needed_classifications: p.needed_classifications + c.metadata.needed_classifications
         provided_classifications: p.provided_classifications + c.metadata.provided_classifications
+        storms: p.storms.concat [c.id]
       }
     , {
       needed_classifications: 0
       provided_classifications: 0
+      storms: []
     }
 
     callback null, reducedData
@@ -162,6 +164,7 @@ app.get '/storms_status', (req, res) ->
       {
         needed_classifications: p.needed_classifications + c.needed_classifications
         provided_classifications: p.provided_classifications + c.provided_classifications
+        storms: p.storms.concat c.storms
       }
 
     s3.putObject
