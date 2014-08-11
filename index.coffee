@@ -37,6 +37,14 @@ projects = [
     name: 'worms'
     display_name: 'Worm Watch Lab'
     url: 'http://www.wormwatchlab.org'
+  }, {
+    name: 'condors'
+    display_name: 'Condor Watch'
+    url: 'http://www.condorwatch.org'
+  }, {
+    name: 'cyclone_center'
+    display_name: 'Cyclone Center'
+    url: 'http://www.cyclonecenter.org'
   }
 ]
 
